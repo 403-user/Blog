@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawaii Blog - Your Cute Blog Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* Chibi Character Container */
+        #chibi-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 140px;
+            height: 160px;
+            z-index: 9999;
+            cursor: pointer;
+        }
+
+        #chibi-character {
+            width: 100%;
+            height: 100%;
+            animation: idle-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes idle-bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        #chibi-character svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Speech Bubble */
+        #chibi-speech {
+            position: fixed;
+            bottom: 180px;
+            left: 20px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px;
+            z-index: 10000;
+            display: none;
+        }
+
+        #chibi-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            border: 10px solid transparent;
+            border-top-color: white;
+            border-bottom: 0;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #f093fb;
+        }
+
+        .login-link {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .btn-primary {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 35px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 45px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 16px 40px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: white;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1em;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        /* Recent Posts */
+        .section-title {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+        }
+
+        .post-content {
+            padding: 20px;
+        }
+
+        .post-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .post-title {
+            color: white;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .post-meta {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85em;
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .newsletter h2 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .newsletter p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .newsletter-form input:focus {
+            border-color: #f093fb;
+        }
+
+        .newsletter-form button {
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Heart Particles */
+        .heart-particle {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 9998;
+            animation: fall-hearts 2s ease-out forwards;
+        }
+
+        @keyframes fall-hearts {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(300px) rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stats {
+                gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            #chibi-container {
+                width: 100px;
+                height: 115px;
+            }
+        }
+    </style>
+    <script src="static/pio-loader.js"></script>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="brand">🌸 Kawaii Blog</div>
+        <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="shop.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <a href="login.html" class="login-link">Login</a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Welcome to Kawaii Blog! 🎀</h1>
+            <p>Your daily dose of cute, creative, and inspiring content. Join our community of writers and readers!</p>
+            <div class="hero-buttons">
+                <a href="blog.html" class="btn-primary">Explore Posts →</a>
+                <a href="login.html" class="btn-secondary">Start Writing</a>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">150+</div>
+                    <div class="stat-label">Articles</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">50K+</div>
+                    <div class="stat-label">Readers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">20+</div>
+                    <div class="stat-label">Authors</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">Beautiful Design</div>
+                <div class="feature-desc">A clean, modern interface that's easy on the eyes and perfect for reading.
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💕</div>
+                <div class="feature-title">Cute Character</div>
+                <div class="feature-desc">Meet our friendly mascot who guides you through your reading journey!</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <div class="feature-title">Easy Publishing</div>
+                <div class="feature-desc">Share your thoughts with our simple and intuitive blog editor.</div>
+            </div>
+        </div>
+
+        <!-- Recent Posts -->
+        <h2 class="section-title">📰 Recent Posts</h2>
+        <div class="posts-grid" id="recentPosts">
+            <!-- Posts inserted by JS -->
+        </div>
+
+        <!-- Newsletter -->
+        <div class="newsletter">
+            <h2>📬 Stay Updated!</h2>
+            <p>Subscribe to our newsletter and never miss out on new posts</p>
+            <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                <input type="email" placeholder="Enter your email..." required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Blog Posts Data
+        const blogPosts = [
+            { id: 1, title: "Getting Started with Web Development", category: "Technology", emoji: "💻", author: "Chibi Dev", date: "Dec 15" },
+            { id: 2, title: "10 Tips for Better Productivity", category: "Lifestyle", emoji: "☀️", author: "Morning Star", date: "Dec 14" },
+            { id: 3, title: "The Art of Minimalist Design", category: "Design", emoji: "🎨", author: "Artistic Soul", date: "Dec 13" }
+        ];
+
+        // Render Recent Posts
+        function renderRecentPosts() {
+            const container = document.getElementById('recentPosts');
+            container.innerHTML = blogPosts.map(post => `
+                <div class="post-card">
+                    <div class="post-image">${post.emoji}</div>
+                    <div class="post-content">
+                        <span class="post-category">${post.category}</span>
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-meta">By ${post.author} • ${post.date}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Subscribe Newsletter
+        function subscribeNewsletter(e) {
+            e.preventDefault();
+            alert('Thanks for subscribing! 🎉');
+
+            // createHeartParticles is now in chibi-new.js? No, it was local. 
+            // chibi-new.js has dropHearts. I should use that or keep local.
+            // keeping local if used by other functions, but chibi-new.js has its own.
+            // renderRecentPosts does NOT use Chibi.
+            // subscribeNewsletter uses chibi.reactToEvent used to call createHeartParticles locally.
+        }
+
+        renderRecentPosts();
+    </script>
+
+</body>
+
+</html>

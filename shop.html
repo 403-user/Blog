@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Kawaii Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        #chibi-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 140px;
+            height: 160px;
+            z-index: 9999;
+            cursor: pointer;
+        }
+
+        #chibi-character {
+            width: 100%;
+            height: 100%;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        #chibi-speech {
+            position: fixed;
+            bottom: 180px;
+            left: 20px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            color: #333;
+            max-width: 200px;
+            z-index: 10000;
+            display: none;
+        }
+
+        #chibi-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            border: 10px solid transparent;
+            border-top-color: white;
+            border-bottom: 0;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-nav {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #f093fb;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .name {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .count {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .particle {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 9998;
+            animation: fall 2s ease-out forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(300px) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+    <script src="static/pio-loader.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="brand-nav">Kawaii Blog</div>
+        <ul class="nav-links">
+            <li><a href="home.html">Home</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="shop.html">Categories</a></li>
+            <li><a href="profile.html">Profile</a></li>
+        </ul>
+        <button class="btn" onclick="logout()">Logout</button>
+    </nav>
+    <div class="container">
+        <div class="header">
+            <h1>Categories</h1>
+            <p>Browse posts by topic</p>
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <script>
+        var cats = [
+            { n: "Technology", e: "💻", c: 24 },
+            { n: "Lifestyle", e: "☀️", c: 31 },
+            { n: "Design", e: "🎨", c: 18 },
+            { n: "Education", e: "📚", c: 22 },
+            { n: "Fashion", e: "👗", c: 15 },
+            { n: "Food", e: "🍰", c: 19 }
+        ];
+        document.getElementById('grid').innerHTML = cats.map(function (c) {
+            return '<div class="card"><div class="emoji">' + c.e + '</div><div class="name">' + c.n + '</div><div class="count">' + c.c + ' posts</div></div>';
+        }).join('');
+        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
+
+        if (!localStorage.getItem('isLoggedIn')) window.location.href = 'login.html';
+    </script>
+</body>
+
+</html>
